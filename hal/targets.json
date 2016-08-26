@@ -631,6 +631,19 @@
         "default_lib": "small",
         "release_versions": ["2"]
     },
+    "ARDUCLEO_F051K8": {
+        "supported_form_factors": ["ARDUINO"],
+        "core": "Cortex-M0",
+        "default_toolchain": "uARM",
+        "extra_labels": ["STM", "STM32F0", "STM32F051K8"],
+        "supported_toolchains": ["ARM", "uARM", "IAR", "GCC_ARM"],
+        "inherits": ["Target"],
+        "progen": {"target": "arducleo-f051k8"},
+        "detect_code": ["1791"],
+        "device_has": ["ANALOGIN", "ANALOGOUT", "I2C", "I2CSLAVE", "INTERRUPTIN", "PORTIN", "PORTINOUT", "PORTOUT", "PWMOUT", "RTC", "SERIAL", "SLEEP", "SPI", "SPISLAVE", "STDIO_MESSAGES"],
+        "default_lib": "small",
+        "release_versions": ["2"]
+    },
     "NUCLEO_F042K6": {
         "supported_form_factors": ["ARDUINO"],
         "core": "Cortex-M0",
