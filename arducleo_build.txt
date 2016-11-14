@@ -1,0 +1,21 @@
+
+ manual => docs/BUILDING.md
+ 
+ ** Prerequired:
+ -------------------------  
+  {mbed-os}/
+   1. python + pip
+ 
+   2. pip install -r requirements.txt
+   
+ 
+ ** Build Target
+ -------------------------  
+ {mbed-os}/tools
+   > python build.py -m ARDUCLEO_F103CB -t ARM
+   > python build.py -m ARDUCLEO_F103CB -t GCC_ARM
+   
+ -------------------------------------------------------------------------------
+ dotnfc@163.com
+ 2016/11/14 12:20:07 
+ 
