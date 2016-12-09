@@ -1,6 +1,6 @@
 /* mbed Microcontroller Library
  *******************************************************************************
- * Copyright (c) 2015, STMicroelectronics
+ * Copyright (c) 2014, STMicroelectronics
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,44 +27,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************
  */
-#include "sleep_api.h"
-
-
-#if DEVICE_SLEEP
+#ifndef MBED_PERIPHERALNAMES_H
+#define MBED_PERIPHERALNAMES_H
 
 #include "cmsis.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void sleep(void) {
-    // Stop HAL systick
-    HAL_SuspendTick();
-    // Request to enter SLEEP mode
-    HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
-    // Restart HAL systick
-    HAL_ResumeTick();
-}
+typedef enum {
+    ADC_1 = (int)ADC1_BASE,
+    ADC_2 = (int)ADC_BASE
+} ADCName;
 
+typedef enum {
+    UART_1 = (int)USART1_BASE
+} UARTName;
 
-#if defined(TARGET_STM32F030F4) || defined(TARGET_STM32F030R8) || defined (TARGET_STM32F051R8)
-void deepsleep(void) {
-    // Request to enter STOP mode with regulator in low power mode
-    HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+#define STDIO_UART_TX  PA_2
+#define STDIO_UART_RX  PA_3
+#define STDIO_UART     UART_1
 
-    HAL_InitTick(TICK_INT_PRIORITY);
+typedef enum {
+    SPI_1 = (int)SPI1_BASE
+} SPIName;
 
-    // After wake-up from STOP reconfigure the PLL
-    SetSysClock();
+typedef enum {
+    I2C_1 = (int)I2C1_BASE
+} I2CName;
 
-    HAL_InitTick(TICK_INT_PRIORITY);
-}
+typedef enum {
+    PWM_1 = (int)TIM1_BASE,
+    PWM_3 = (int)TIM3_BASE,
+    PWM_14 = (int)TIM14_BASE,
+    PWM_16 = (int)TIM16_BASE,
+    PWM_17 = (int)TIM17_BASE
+} PWMName;
 
-#else
-void deepsleep(void) {
-    // Request to enter STOP mode with regulator in low power mode
-    HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-
-    // After wake-up from STOP reconfigure the PLL
-    SetSysClock();
+#ifdef __cplusplus
 }
 #endif
 

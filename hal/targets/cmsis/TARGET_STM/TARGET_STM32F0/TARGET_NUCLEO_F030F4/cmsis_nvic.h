@@ -1,4 +1,5 @@
 /* mbed Microcontroller Library
+ * CMSIS-style functionality to support dynamic vectors
  *******************************************************************************
  * Copyright (c) 2015, STMicroelectronics
  * All rights reserved.
@@ -26,45 +27,28 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************
- */
-#include "sleep_api.h"
+ */ 
 
+#ifndef MBED_CMSIS_NVIC_H
+#define MBED_CMSIS_NVIC_H
 
-#if DEVICE_SLEEP
+// STM32F030R8
+// CORE: 16 vectors = 64 bytes from 0x00 to 0x3F
+// MCU Peripherals: 29 vectors = 116 bytes from 0x40 to 0xB3
+// Total: 45 vectors = 180 bytes (0xB4) to be reserved in RAM
+#define NVIC_NUM_VECTORS      45
+#define NVIC_USER_IRQ_OFFSET  16
 
 #include "cmsis.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void sleep(void) {
-    // Stop HAL systick
-    HAL_SuspendTick();
-    // Request to enter SLEEP mode
-    HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
-    // Restart HAL systick
-    HAL_ResumeTick();
-}
+void NVIC_SetVector(IRQn_Type IRQn, uint32_t vector);
+uint32_t NVIC_GetVector(IRQn_Type IRQn);
 
-
-#if defined(TARGET_STM32F030F4) || defined(TARGET_STM32F030R8) || defined (TARGET_STM32F051R8)
-void deepsleep(void) {
-    // Request to enter STOP mode with regulator in low power mode
-    HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-
-    HAL_InitTick(TICK_INT_PRIORITY);
-
-    // After wake-up from STOP reconfigure the PLL
-    SetSysClock();
-
-    HAL_InitTick(TICK_INT_PRIORITY);
-}
-
-#else
-void deepsleep(void) {
-    // Request to enter STOP mode with regulator in low power mode
-    HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-
-    // After wake-up from STOP reconfigure the PLL
-    SetSysClock();
+#ifdef __cplusplus
 }
 #endif
 

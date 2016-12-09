@@ -1,6 +1,7 @@
 /* mbed Microcontroller Library
+ * A generic CMSIS include header
  *******************************************************************************
- * Copyright (c) 2015, STMicroelectronics
+ * Copyright (c) 2014, STMicroelectronics
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,45 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************
  */
-#include "sleep_api.h"
 
+#ifndef MBED_CMSIS_H
+#define MBED_CMSIS_H
 
-#if DEVICE_SLEEP
-
-#include "cmsis.h"
-
-
-void sleep(void) {
-    // Stop HAL systick
-    HAL_SuspendTick();
-    // Request to enter SLEEP mode
-    HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
-    // Restart HAL systick
-    HAL_ResumeTick();
-}
-
-
-#if defined(TARGET_STM32F030F4) || defined(TARGET_STM32F030R8) || defined (TARGET_STM32F051R8)
-void deepsleep(void) {
-    // Request to enter STOP mode with regulator in low power mode
-    HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-
-    HAL_InitTick(TICK_INT_PRIORITY);
-
-    // After wake-up from STOP reconfigure the PLL
-    SetSysClock();
-
-    HAL_InitTick(TICK_INT_PRIORITY);
-}
-
-#else
-void deepsleep(void) {
-    // Request to enter STOP mode with regulator in low power mode
-    HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-
-    // After wake-up from STOP reconfigure the PLL
-    SetSysClock();
-}
-#endif
+#include "stm32f0xx.h"
+#include "cmsis_nvic.h"
 
 #endif

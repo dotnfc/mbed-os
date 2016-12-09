@@ -1,4 +1,5 @@
 /* mbed Microcontroller Library
+ * CMSIS-style functionality to support dynamic vectors
  *******************************************************************************
  * Copyright (c) 2015, STMicroelectronics
  * All rights reserved.
@@ -27,45 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************
  */
-#include "sleep_api.h"
+#include "cmsis_nvic.h"
+
+#define NVIC_RAM_VECTOR_ADDRESS   (0x20000000)  // Vectors positioned at start of RAM
+#define NVIC_FLASH_VECTOR_ADDRESS (0x08000000)  // Initial vector position in flash
 
 
-#if DEVICE_SLEEP
+void NVIC_SetVector(IRQn_Type IRQn, uint32_t vector) {
+    int i;
+    
+    // Copy and switch to dynamic vectors if first time called
+    if ((SYSCFG->CFGR1 & SYSCFG_CFGR1_MEM_MODE) != SYSCFG_CFGR1_MEM_MODE) {
+        uint32_t *old_vectors = (uint32_t *)NVIC_FLASH_VECTOR_ADDRESS;
+        for (i = 0; i < NVIC_NUM_VECTORS; i++) {
+            *((uint32_t *)(NVIC_RAM_VECTOR_ADDRESS + (i*4))) = old_vectors[i];
+        }
+        SYSCFG->CFGR1 |= SYSCFG_CFGR1_MEM_MODE; // Embedded SRAM mapped at 0x00000000
+    }
 
-#include "cmsis.h"
-
-
-void sleep(void) {
-    // Stop HAL systick
-    HAL_SuspendTick();
-    // Request to enter SLEEP mode
-    HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
-    // Restart HAL systick
-    HAL_ResumeTick();
+    // Set the vector
+    *((uint32_t *)(NVIC_RAM_VECTOR_ADDRESS + (IRQn*4) + (NVIC_USER_IRQ_OFFSET*4))) = vector;
 }
 
-
-#if defined(TARGET_STM32F030F4) || defined(TARGET_STM32F030R8) || defined (TARGET_STM32F051R8)
-void deepsleep(void) {
-    // Request to enter STOP mode with regulator in low power mode
-    HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-
-    HAL_InitTick(TICK_INT_PRIORITY);
-
-    // After wake-up from STOP reconfigure the PLL
-    SetSysClock();
-
-    HAL_InitTick(TICK_INT_PRIORITY);
+uint32_t NVIC_GetVector(IRQn_Type IRQn) {
+    uint32_t *vectors = (uint32_t*)NVIC_RAM_VECTOR_ADDRESS;
+    // Return the vector
+    return vectors[IRQn + 16];
 }
-
-#else
-void deepsleep(void) {
-    // Request to enter STOP mode with regulator in low power mode
-    HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
-
-    // After wake-up from STOP reconfigure the PLL
-    SetSysClock();
-}
-#endif
-
-#endif

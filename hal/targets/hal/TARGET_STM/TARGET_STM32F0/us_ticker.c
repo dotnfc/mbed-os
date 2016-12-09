@@ -30,7 +30,7 @@
 #include "PeripheralNames.h"
 
 
-#if defined(TARGET_STM32F030R8) || defined(TARGET_STM32F070RB)
+#if defined(TARGET_STM32F030F4) || defined(TARGET_STM32F030R8) || defined(TARGET_STM32F070RB)
 
 // Timer selection
 #define TIM_MST TIM1

@@ -47,12 +47,12 @@ extern "C" {
 
 void rtc_set_irq_handler(uint32_t handler);
 
-void rtc_ticker_disable_irq();
-uint32_t rtc_ticker_get_synch_presc();
+void rtc_ticker_disable_irq(void);
+uint32_t rtc_ticker_get_synch_presc(void);
 
 void rtc_set_alarm(struct tm *ti, uint32_t subsecs);
-uint32_t rtc_read_subseconds();
-void rtc_reconfigure_prescalers();
+uint32_t rtc_read_subseconds(void);
+void rtc_reconfigure_prescalers(void);
 
 #ifdef __cplusplus
 }
