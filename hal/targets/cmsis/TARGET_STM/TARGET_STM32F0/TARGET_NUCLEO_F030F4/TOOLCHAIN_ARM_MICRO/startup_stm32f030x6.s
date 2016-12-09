@@ -1,4 +1,4 @@
-; STM32F030x8 devices vector table for MDK ARM_STD toolchain
+; STM32F030x8 devices vector table for MDK ARM_MICRO toolchain
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Copyright (c) 2014, STMicroelectronics
 ; All rights reserved.
@@ -27,7 +27,34 @@
 ; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; Amount of memory (in bytes) allocated for Stack
+; Tailor this value to your application needs
+; <h> Stack Configuration
+;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+
+Stack_Size      EQU     0x00000400
+
+                AREA    STACK, NOINIT, READWRITE, ALIGN=3
+                EXPORT  __initial_sp
+                
+Stack_Mem       SPACE   Stack_Size
 __initial_sp    EQU     0x20001000 ; Top of RAM (4 KB for STM32F030F4)
+
+
+; <h> Heap Configuration
+;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+
+Heap_Size       EQU     0x00000400
+
+                AREA    HEAP, NOINIT, READWRITE, ALIGN=3
+                EXPORT  __heap_base
+                EXPORT  __heap_limit
+                
+__heap_base
+Heap_Mem        SPACE   Heap_Size
+__heap_limit    EQU (__initial_sp - Stack_Size)
 
                 PRESERVE8
                 THUMB
@@ -77,15 +104,14 @@ __Vectors       DCD     __initial_sp                   ; Top of Stack
                 DCD     0                              ; Reserved
                 DCD     0                              ; Reserved
                 DCD     TIM14_IRQHandler               ; TIM14
-                DCD     TIM15_IRQHandler               ; TIM15
+                DCD     0                              ; Reserved
                 DCD     TIM16_IRQHandler               ; TIM16
                 DCD     TIM17_IRQHandler               ; TIM17
                 DCD     I2C1_IRQHandler                ; I2C1
-                DCD     I2C2_IRQHandler                ; I2C2
+                DCD     0                              ; Reserved
                 DCD     SPI1_IRQHandler                ; SPI1
-                DCD     SPI2_IRQHandler                ; SPI2
+                DCD     0                              ; Reserved
                 DCD     USART1_IRQHandler              ; USART1
-                DCD     USART2_IRQHandler              ; USART2
 
 __Vectors_End
 
@@ -145,15 +171,11 @@ Default_Handler PROC
                 EXPORT  TIM1_CC_IRQHandler             [WEAK]
                 EXPORT  TIM3_IRQHandler                [WEAK]
                 EXPORT  TIM14_IRQHandler               [WEAK]
-                EXPORT  TIM15_IRQHandler               [WEAK]
                 EXPORT  TIM16_IRQHandler               [WEAK]
                 EXPORT  TIM17_IRQHandler               [WEAK]
                 EXPORT  I2C1_IRQHandler                [WEAK]
-                EXPORT  I2C2_IRQHandler                [WEAK]
                 EXPORT  SPI1_IRQHandler                [WEAK]
-                EXPORT  SPI2_IRQHandler                [WEAK]
                 EXPORT  USART1_IRQHandler              [WEAK]
-                EXPORT  USART2_IRQHandler              [WEAK]
 
 
 WWDG_IRQHandler
@@ -171,15 +193,11 @@ TIM1_BRK_UP_TRG_COM_IRQHandler
 TIM1_CC_IRQHandler
 TIM3_IRQHandler
 TIM14_IRQHandler
-TIM15_IRQHandler
 TIM16_IRQHandler
 TIM17_IRQHandler
 I2C1_IRQHandler
-I2C2_IRQHandler
 SPI1_IRQHandler
-SPI2_IRQHandler
 USART1_IRQHandler
-USART2_IRQHandler
 
                 B       .
 
