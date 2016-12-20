@@ -66,14 +66,14 @@ WEAK void mbed_die(void) {
     }
 }
 
-void mbed_error_printf(const char* format, ...) {
+WEAK void mbed_error_printf(const char* format, ...) {
     va_list arg;
     va_start(arg, format);
     mbed_error_vfprintf(format, arg);
     va_end(arg);
 }
 
-void mbed_error_vfprintf(const char * format, va_list arg) {
+WEAK void mbed_error_vfprintf(const char * format, va_list arg) {
 #if DEVICE_SERIAL
     core_util_critical_section_enter();
     char buffer[128];
