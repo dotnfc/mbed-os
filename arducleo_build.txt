@@ -9,10 +9,14 @@
    2. pip install -r requirements.txt
    
  
+ ** change toolchain path
+  {mbed-os}/mbed_settings.py
+  
  ** Build Target
  -------------------------  
  {mbed-os}/tools
    > python build.py -m ARDUCLEO_F103CB -t ARM
+   > python build.py -m ARDUCLEO_F103CB -t uARM
    > python build.py -m ARDUCLEO_F103CB -t GCC_ARM
    
  -------------------------------------------------------------------------------
